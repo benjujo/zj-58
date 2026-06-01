@@ -88,3 +88,58 @@ Also you may get a debian package by running:
 ```
   sudo cpack -G DEB
 ```
+
+NixOS / Nix
+===========
+
+This project provides a Nix flake for easy installation on NixOS or any system with Nix.
+
+### Quick install (try it out)
+
+```bash
+nix build github:klirichek/zj-58
+# or from local clone:
+nix build
+```
+
+### NixOS configuration (recommended)
+
+Add the driver to your NixOS configuration:
+
+```nix
+# In your flake.nix inputs:
+{
+  inputs = {
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    zj-58.url = "github:klirichek/zj-58";  # or your fork
+  };
+}
+
+# In your configuration.nix:
+{ inputs, pkgs, ... }:
+{
+  services.printing = {
+    enable = true;
+    drivers = [ inputs.zj-58.packages.${pkgs.system}.default ];
+  };
+}
+```
+
+Or use the provided NixOS module:
+
+```nix
+{ inputs, ... }:
+{
+  imports = [ inputs.zj-58.nixosModules.default ];
+  
+  services.printing.drivers.zj-58.enable = true;
+}
+```
+
+### Development shell
+
+Enter a shell with build dependencies:
+
+```bash
+nix develop
+```
